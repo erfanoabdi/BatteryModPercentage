@@ -12,19 +12,15 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    ProcessBuilder cmd;
-    String result = "";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    String getCapicity(){
+        ProcessBuilder cmd;
+        String result = "";
 
         try {
             String[] args = { "/system/bin/cat", "/sys/class/power_supply/gb_battery/capacity" };
             cmd = new ProcessBuilder(args);
 
+            Runtime.getRuntime().exec("su");
             Process process = cmd.start();
             InputStream in = process.getInputStream();
             byte[] re = new byte[32768];
@@ -38,38 +34,30 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        return result.trim();
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+
+        String result = getCapicity();
         TextView tv = (TextView)findViewById(R.id.perc);
         tv.setText(result.trim());
 
-        result = "";
 
         Button clickButton = (Button) findViewById(R.id.ref);
         clickButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                try {
-                    String[] args = { "/system/bin/cat", "/sys/class/power_supply/gb_battery/capacity" };
-                    cmd = new ProcessBuilder(args);
-
-                    Process process = cmd.start();
-                    InputStream in = process.getInputStream();
-                    byte[] re = new byte[32768];
-                    int read = 0;
-                    while ( (read = in.read(re, 0, 32768)) != -1) {
-                        String string = new String(re, 0, read);
-                        Log.e(getClass().getSimpleName(), string);
-                        result += string;
-                    }
-                    in.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
+                String result = getCapicity();
                 TextView tv = (TextView)findViewById(R.id.perc);
                 tv.setText(result.trim());
-                result = "";
+
             }
         });
     }
