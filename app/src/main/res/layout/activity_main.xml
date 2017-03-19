@@ -13,9 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Battery Mod :"
-        android:layout_above="@+id/perc"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textView2" />
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/ref" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0"
         android:id="@+id/perc"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -40,7 +40,27 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="%"
         android:id="@+id/textView"
-        android:layout_above="@+id/ref"
+        android:layout_alignBaseline="@+id/perc"
+        android:layout_alignBottom="@+id/perc"
         android:layout_toEndOf="@+id/perc" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/ref"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" >
+
+    </ScrollView>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list"
+        android:choiceMode="none"
+        android:layout_alignTop="@+id/scrollView"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

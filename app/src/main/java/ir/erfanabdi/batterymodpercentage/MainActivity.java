@@ -1,23 +1,47 @@
 package ir.erfanabdi.batterymodpercentage;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    String getCapicity(){
+    Context context;
+    String gb_battery = "/sys/class/power_supply/gb_battery/";
+    String[] getfiles(String path){
+        File dirFileObj = new File(path);
+        File[] files = dirFileObj.listFiles();
+
+        String[] fileNames;
+        if (files != null) {
+            fileNames = new String[files.length];
+            for (int i = 0; i < files.length; i++) {
+                fileNames[i] = files[i].getName() + ": " + getdata(files[i].getPath());
+            }
+        }
+        else {
+            fileNames = new String[1];
+            fileNames[0] = "No Mod Found";
+        }
+        return fileNames;
+    }
+
+    String getdata(String path){
         ProcessBuilder cmd;
         String result = "";
 
         try {
-            String[] args = { "/system/bin/cat", "/sys/class/power_supply/gb_battery/capacity" };
+            String[] args = { "/system/bin/cat", path };
             cmd = new ProcessBuilder(args);
 
             Runtime.getRuntime().exec("su");
@@ -42,23 +66,38 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        String result = getCapicity();
+        String result = getdata(gb_battery + "capacity");
+        if (result.trim() == "")
+            result = "0";
         TextView tv = (TextView)findViewById(R.id.perc);
         tv.setText(result.trim());
 
+        context = this;
 
         Button clickButton = (Button) findViewById(R.id.ref);
         clickButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String result = getCapicity();
+                String result = getdata(gb_battery + "capacity");
+                if (result.trim() == "")
+                    result = "0";
                 TextView tv = (TextView)findViewById(R.id.perc);
                 tv.setText(result.trim());
 
+                ListView list = (ListView) findViewById(R.id.list);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                        android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
+
+                list.setAdapter(adapter);
             }
         });
+
+        ListView list = (ListView) findViewById(R.id.list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
+
+        list.setAdapter(adapter);
+
     }
 }
