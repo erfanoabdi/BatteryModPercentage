@@ -52,6 +52,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
         b = new NotificationCompat.Builder(context);
         nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        LongOperation lo = new LongOperation();
 
         if(action.equals(ACTION_MOD_ATTACH)) {
             Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
@@ -62,60 +63,66 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_battery_mgr_mod)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setOngoing(true);
+                    .setOngoing(true);
 
             nm.notify(1, b.build());
             Quit_Task = false;
 
-            class LongOperation extends AsyncTask<String, Void, String> {
+            lo.execute("");
 
-                void Sleep(int ms)
-                {
-                    try
-                    {
-                        Thread.sleep(ms);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                }
 
-                protected String oldres="100";
-                @Override
-                protected String doInBackground(String... params) {
-                    String result = "99";
-                    while (!Quit_Task) {
-                        Sleep(1000);
-                        result = MainActivity.getCapacity();
-                        if (result != oldres) {
-                            b.setContentTitle("Battery Mod: " + result + "%");
-                            nm.notify(1, b.build());
-                            oldres = result;
-                        }
-                    }
-                    return "";
-                }
-
-                @Override
-                protected void onPostExecute(String result) {
-
-                }
-
-                @Override
-                protected void onPreExecute() {}
-
-                @Override
-                protected void onProgressUpdate(Void... values) {}
+        }else if (action.equals(ACTION_MOD_DETACH)) {
+                Quit_Task = true;
+                boolean cancel = lo.cancel(true);
+                nm.cancel(1);
             }
-
-            new LongOperation().execute("");
-
-
-        }else if (action.equals(ACTION_MOD_DETACH)){
-            Quit_Task = true;
-            nm.cancel(1);
         }
 
+    class LongOperation extends AsyncTask<String, Void, String> {
+
+        void Sleep(int ms)
+        {
+            try
+            {
+                Thread.sleep(ms);
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        protected String oldres="100";
+        @Override
+        protected String doInBackground(String... params) {
+            String result = "99";
+            while (!Quit_Task) {
+                Sleep(1000);
+                result = MainActivity.getCapacity();
+                if (result != oldres) {
+                    b.setContentTitle("Battery Mod: " + result + "%");
+                    nm.notify(1, b.build());
+                    oldres = result;
+                }
+                if (result == "0"){
+                    Quit_Task = true;
+                    nm.cancel(1);
+                    return "0";
+                }
+
+            }
+            return "0";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 
 }
