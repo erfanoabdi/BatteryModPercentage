@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -41,11 +42,16 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
     public static final String ACTION_REQUEST_CONSENT_FOR_UNSECURE_FIRMWARE_UPDATE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_REQ";
     public static final String ACTION_USER_CONSENT_RESP_FOR_UNSECURE_FIRMWARE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_RESP";
 
+    public NotificationCompat.Builder b;
+    public NotificationManager nm;
+
+    public boolean Quit_Task = false;
+
     public void onReceive(Context context , Intent intent) {
         String action = intent.getAction();
 
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context);
-        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        b = new NotificationCompat.Builder(context);
+        nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if(action.equals(ACTION_MOD_ATTACH)) {
             Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
@@ -53,17 +59,63 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
             b.setAutoCancel(true)
                 .setContentTitle("Battery Mod: " + MainActivity.getCapacity() + "%")
-                .setSmallIcon(R.mipmap.icon)
+                .setSmallIcon(R.drawable.ic_battery_mgr_mod)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setOngoing(true);
 
             nm.notify(1, b.build());
+            Quit_Task = false;
+
+            class LongOperation extends AsyncTask<String, Void, String> {
+
+                void Sleep(int ms)
+                {
+                    try
+                    {
+                        Thread.sleep(ms);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+                protected String oldres="100";
+                @Override
+                protected String doInBackground(String... params) {
+                    String result = "99";
+                    while (!Quit_Task) {
+                        Sleep(1000);
+                        result = MainActivity.getCapacity();
+                        if (result != oldres) {
+                            b.setContentTitle("Battery Mod: " + result + "%");
+                            nm.notify(1, b.build());
+                            oldres = result;
+                        }
+                    }
+                    return "";
+                }
+
+                @Override
+                protected void onPostExecute(String result) {
+
+                }
+
+                @Override
+                protected void onPreExecute() {}
+
+                @Override
+                protected void onProgressUpdate(Void... values) {}
+            }
+
+            new LongOperation().execute("");
+
+
         }else if (action.equals(ACTION_MOD_DETACH)){
+            Quit_Task = true;
             nm.cancel(1);
         }
 
     }
-
 
 }
