@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     public static String getCapacity(){
         String result = getdata(gb_battery + "capacity");
         if (result.trim() == "")
-            result = "0";
+            result = "-1";
         return result.trim();
     }
 

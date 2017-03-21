@@ -2,6 +2,7 @@ package ir.erfanabdi.batterymodpercentage;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -58,12 +59,25 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
             Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
             t.show();
 
-            b.setAutoCancel(true)
+            Intent resultIntent = new Intent(context, MainActivity.class);
+
+            PendingIntent resultPendingIntent =
+                    PendingIntent.getActivity(
+                            context,
+                            0,
+                            resultIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+
+
+            b.setAutoCancel(false)
                 .setContentTitle("Battery Mod: " + MainActivity.getCapacity() + "%")
+                .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
                 .setSmallIcon(R.drawable.ic_battery_mgr_mod)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
-                    .setOngoing(true);
+                .setContentIntent(resultPendingIntent)
+                .setOngoing(true);
 
             nm.notify(1, b.build());
             Quit_Task = false;
@@ -92,9 +106,13 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
         }
 
         protected String oldres="100";
+        protected String oldsts="Full";
+
         @Override
         protected String doInBackground(String... params) {
             String result = "99";
+            String status = "Full";
+
             while (!Quit_Task) {
                 Sleep(1000);
                 result = MainActivity.getCapacity();
@@ -103,10 +121,16 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                     nm.notify(1, b.build());
                     oldres = result;
                 }
-                if (result == "0"){
+                status = MainActivity.getdata(MainActivity.gb_battery + "status");
+                if (status != oldsts) {
+                    b.setContentText(status);
+                    nm.notify(1, b.build());
+                    oldsts = status;
+                }
+                if (result == "-1"){
                     Quit_Task = true;
                     nm.cancel(1);
-                    return "0";
+                    return "-1";
                 }
 
             }
