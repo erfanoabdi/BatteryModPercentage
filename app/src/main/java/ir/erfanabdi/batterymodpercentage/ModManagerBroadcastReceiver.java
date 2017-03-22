@@ -43,10 +43,10 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
     public static final String ACTION_REQUEST_CONSENT_FOR_UNSECURE_FIRMWARE_UPDATE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_REQ";
     public static final String ACTION_USER_CONSENT_RESP_FOR_UNSECURE_FIRMWARE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_RESP";
 
-    public NotificationCompat.Builder b;
-    public NotificationManager nm;
+    public static NotificationCompat.Builder b;
+    public static NotificationManager nm;
 
-    public boolean Quit_Task = false;
+    public static boolean Quit_Task = false;
 
     public void onReceive(Context context , Intent intent) {
         String action = intent.getAction();
@@ -86,13 +86,15 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
 
         }else if (action.equals(ACTION_MOD_DETACH)) {
+                MainActivity.pros.destroy();
+                MainActivity.isrooted = false;
                 Quit_Task = true;
                 boolean cancel = lo.cancel(true);
                 nm.cancel(1);
             }
         }
 
-    class LongOperation extends AsyncTask<String, Void, String> {
+    public static class LongOperation extends AsyncTask<String, Void, String> {
 
         void Sleep(int ms)
         {
@@ -130,6 +132,8 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                 if (result == "-1"){
                     Quit_Task = true;
                     nm.cancel(1);
+                    //MainActivity.pros.destroy();
+                    MainActivity.isrooted = false;
                     return "-1";
                 }
 
