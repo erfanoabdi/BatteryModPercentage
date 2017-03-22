@@ -47,8 +47,10 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
     public static NotificationManager nm;
 
     public static boolean Quit_Task = false;
-
+    public static PendingIntent resultPendingIntent;
+    public static Context contxt;
     public void onReceive(Context context , Intent intent) {
+        contxt = context;
         String action = intent.getAction();
 
         b = new NotificationCompat.Builder(context);
@@ -61,7 +63,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
             Intent resultIntent = new Intent(context, MainActivity.class);
 
-            PendingIntent resultPendingIntent =
+            resultPendingIntent =
                     PendingIntent.getActivity(
                             context,
                             0,
@@ -86,7 +88,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
 
         }else if (action.equals(ACTION_MOD_DETACH)) {
-                MainActivity.pros.destroy();
+                //MainActivity.pros.destroy();
                 MainActivity.isrooted = false;
                 Quit_Task = true;
                 boolean cancel = lo.cancel(true);
@@ -119,7 +121,15 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                 Sleep(1000);
                 result = MainActivity.getCapacity();
                 if (result != oldres) {
-                    b.setContentTitle("Battery Mod: " + result + "%");
+                    b.setContentTitle("Battery Mod: " + result + "%")
+                            .setAutoCancel(false)
+                            .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
+                            .setLargeIcon(BitmapFactory.decodeResource(contxt.getResources(), R.mipmap.icon))
+                            .setSmallIcon(R.drawable.ic_battery_mgr_mod)
+                            .setPriority(NotificationCompat.PRIORITY_MIN)
+                            .setContentIntent(resultPendingIntent)
+                            .setOngoing(true);
+
                     nm.notify(1, b.build());
                     oldres = result;
                 }
