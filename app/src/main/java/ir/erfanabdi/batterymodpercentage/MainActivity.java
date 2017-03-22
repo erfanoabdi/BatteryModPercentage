@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                         android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
                 list.setAdapter(adapter);
-                if(lo.isCancelled()){
+                if(lo.isCancelled() && getCapacity() != "-1"){
                     lo.execute("");
                 }
             }
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
         list.setAdapter(adapter);
 
-        if(lo.isCancelled()){
+        if(lo.isCancelled() && getCapacity() != "-1"){
             lo.execute("");
         }
 

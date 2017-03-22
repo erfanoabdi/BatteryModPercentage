@@ -71,20 +71,22 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                             PendingIntent.FLAG_UPDATE_CURRENT
                     );
 
+            if (!MainActivity.getCapacity().trim().equals("-1")) {
 
-            b.setAutoCancel(false)
-                .setContentTitle("Battery Mod: " + MainActivity.getCapacity() + "%")
-                .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
-                .setSmallIcon(R.drawable.ic_battery_mgr_mod)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
-                .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setContentIntent(resultPendingIntent)
-                .setOngoing(true);
+                b.setAutoCancel(false)
+                        .setContentTitle("Battery Mod: " + MainActivity.getCapacity() + "%")
+                        .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
+                        .setSmallIcon(R.drawable.ic_battery_mgr_mod)
+                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
+                        .setPriority(NotificationCompat.PRIORITY_MIN)
+                        .setContentIntent(resultPendingIntent)
+                        .setOngoing(true);
 
-            nm.notify(1, b.build());
-            Quit_Task = false;
+                nm.notify(1, b.build());
+                Quit_Task = false;
 
-            lo.execute("");
+                lo.execute("");
+            }
 
 
         }else if (action.equals(ACTION_MOD_DETACH)) {
@@ -119,27 +121,29 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
             while (!Quit_Task) {
                 Sleep(1000);
-                result = MainActivity.getCapacity();
-                if (result != oldres) {
-                    b.setContentTitle("Battery Mod: " + result + "%")
-                            .setAutoCancel(false)
-                            .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
-                            .setLargeIcon(BitmapFactory.decodeResource(contxt.getResources(), R.mipmap.icon))
-                            .setSmallIcon(R.drawable.ic_battery_mgr_mod)
-                            .setPriority(NotificationCompat.PRIORITY_MIN)
-                            .setContentIntent(resultPendingIntent)
-                            .setOngoing(true);
+                result = MainActivity.getCapacity().trim();
+                if (!result.equals("-1")) {
+                    if (!result.equals(oldres)) {
+                        b.setContentTitle("Battery Mod: " + result + "%")
+                                .setAutoCancel(false)
+                                .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
+                                .setLargeIcon(BitmapFactory.decodeResource(contxt.getResources(), R.mipmap.icon))
+                                .setSmallIcon(R.drawable.ic_battery_mgr_mod)
+                                .setPriority(NotificationCompat.PRIORITY_MIN)
+                                .setContentIntent(resultPendingIntent)
+                                .setOngoing(true);
 
-                    nm.notify(1, b.build());
-                    oldres = result;
-                }
-                status = MainActivity.getdata(MainActivity.gb_battery + "status");
-                if (status != oldsts) {
-                    b.setContentText(status);
-                    nm.notify(1, b.build());
-                    oldsts = status;
-                }
-                if (result == "-1"){
+                        nm.notify(1, b.build());
+                        oldres = result;
+                    }
+                    status = MainActivity.getdata(MainActivity.gb_battery + "status");
+                    if (!result.equals(oldres)) {
+                        b.setContentText(status);
+                        nm.notify(1, b.build());
+                        oldsts = status;
+                    }
+
+                }else {
                     Quit_Task = true;
                     nm.cancel(1);
                     //MainActivity.pros.destroy();
