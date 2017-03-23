@@ -1,14 +1,19 @@
 package ir.erfanabdi.batterymodpercentage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -264,8 +269,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.help:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.xda-developers.com/moto-z/themes/app-battery-mod-percentage-t3575753/"));
+                startActivity(browserIntent);
+                break;
+            case R.id.opensrc:
+                Intent browserIntent2 = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/erfanoabdi/BatteryModPercentage"));
+                startActivity(browserIntent2);
+                break;
+        }
+        return true;
+    }
+
+    @Override
     public void onDestroy() {
-        pros.destroy();
+        //pros.destroy();
         isrooted = false;
         super.onDestroy();
     }

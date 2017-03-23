@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ir.erfanabdi.batterymodpercentage">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-feature android:name="com.motorola.hardware.mods" android:required="true" />
     <uses-permission android:name="com.motorola.mod.permission.MOD_ACCESS_INFO" />
     <uses-permission android:name="com.motorola.mod.permission.MOD_INTERNAL" />
