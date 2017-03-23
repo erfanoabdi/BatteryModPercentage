@@ -122,11 +122,12 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
             while (!Quit_Task) {
                 Sleep(1000);
                 result = MainActivity.getCapacity().trim();
+                status = MainActivity.getdata(MainActivity.gb_battery + "status");
                 if (!result.equals("-1")) {
-                    if (!result.equals(oldres)) {
+                    if (!result.equals(oldres) || !result.equals(oldres)) {
                         b.setContentTitle("Battery Mod: " + result + "%")
                                 .setAutoCancel(false)
-                                .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
+                                .setContentText(status)
                                 .setLargeIcon(BitmapFactory.decodeResource(contxt.getResources(), R.mipmap.icon))
                                 .setSmallIcon(R.drawable.ic_battery_mgr_mod)
                                 .setPriority(NotificationCompat.PRIORITY_MIN)
@@ -135,11 +136,6 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
                         nm.notify(1, b.build());
                         oldres = result;
-                    }
-                    status = MainActivity.getdata(MainActivity.gb_battery + "status");
-                    if (!result.equals(oldres)) {
-                        b.setContentText(status);
-                        nm.notify(1, b.build());
                         oldsts = status;
                     }
 
