@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -30,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     Context context;
     public static boolean isrooted = false;
+    public static boolean rootchecked = false;
+
     public static Process pros;
     public static String gb_battery = "/sys/class/power_supply/gb_battery/";
     /**
@@ -60,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
             isrooted = false;
             e.printStackTrace();
         }
+        rootchecked = true;
     }
 
     String[] getfiles(String path) {
         String[] fileNames;
         String result = "";
 
-        if (!isrooted)
+        if (!rootchecked)
             rootcheck();
 
         if (isrooted){
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     //os.close();
                     //bf.close();
                     //pros.destroy();
-                    isrooted = false;
+                    //isrooted = false;
                     fileNames = new String[1];
                     fileNames[0] = "No Mod Found";
                     return fileNames;
@@ -161,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getdata(String path) {
         String result = "";
-        if (!isrooted)
+        if (!rootchecked)
             rootcheck();
 
         if (isrooted){
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     //os.close();
                     //bf.close();
                     //pros.destroy();
-                    isrooted = false;
+                    //isrooted = false;
                     return result;
                 }
 
@@ -219,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getCapacity(){
         String result = getdata(gb_battery + "capacity");
-        if (result.trim() == "")
+        if (result.trim().equals(""))
             result = "-1";
         return result.trim();
     }
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        final ModManagerBroadcastReceiver.LongOperation lo = new ModManagerBroadcastReceiver.LongOperation();
+        //final ModManagerBroadcastReceiver.LongOperation lo = new ModManagerBroadcastReceiver.LongOperation();
 
         Button clickButton = (Button) findViewById(R.id.ref);
         clickButton.setOnClickListener(new View.OnClickListener() {
@@ -244,9 +246,9 @@ public class MainActivity extends AppCompatActivity {
                         android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
                 list.setAdapter(adapter);
-                if(lo.isCancelled() && getCapacity() != "-1"){
+                /*if(lo.isCancelled() && getCapacity() != "-1"){
                     lo.execute("");
-                }
+                }*/
             }
         });
 
@@ -259,9 +261,9 @@ public class MainActivity extends AppCompatActivity {
 
         list.setAdapter(adapter);
 
-        if(lo.isCancelled() && getCapacity() != "-1"){
+        /*if(lo.isCancelled() && getCapacity() != "-1"){
             lo.execute("");
-        }
+        }*/
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -288,13 +290,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        //pros.destroy();
-        isrooted = false;
-        super.onDestroy();
     }
 
     @Override

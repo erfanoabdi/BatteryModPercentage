@@ -91,7 +91,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
 
         }else if (action.equals(ACTION_MOD_DETACH)) {
                 //MainActivity.pros.destroy();
-                MainActivity.isrooted = false;
+                //MainActivity.isrooted = false;
                 Quit_Task = true;
                 boolean cancel = lo.cancel(true);
                 nm.cancel(1);
@@ -112,7 +112,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
         }
 
         protected String oldres="100";
-        protected String oldsts="Full";
+        protected String oldsts="Discharging";
 
         @Override
         protected String doInBackground(String... params) {
@@ -124,7 +124,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                 result = MainActivity.getCapacity().trim();
                 status = MainActivity.getdata(MainActivity.gb_battery + "status");
                 if (!result.equals("-1")) {
-                    if (!result.equals(oldres) || !result.equals(oldres)) {
+                    if (!result.equals(oldres) || !status.equals(oldsts)) {
                         b.setContentTitle("Battery Mod: " + result + "%")
                                 .setAutoCancel(false)
                                 .setContentText(status)
@@ -132,7 +132,8 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                                 .setSmallIcon(R.drawable.ic_battery_mgr_mod)
                                 .setPriority(NotificationCompat.PRIORITY_MIN)
                                 .setContentIntent(resultPendingIntent)
-                                .setOngoing(true);
+                                .setOngoing(true)
+                        ;
 
                         nm.notify(1, b.build());
                         oldres = result;
@@ -143,7 +144,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                     Quit_Task = true;
                     nm.cancel(1);
                     //MainActivity.pros.destroy();
-                    MainActivity.isrooted = false;
+                    //MainActivity.isrooted = false;
                     return "-1";
                 }
 
