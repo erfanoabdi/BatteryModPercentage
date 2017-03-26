@@ -39,6 +39,20 @@ public class MainActivity extends AppCompatActivity {
      */
     private GoogleApiClient client;
 
+    public static String readableit(String path, String name){
+        String value;
+        switch (name){
+            case "temp":
+                value = String.valueOf(Double.parseDouble(getdata(path + name))/10)+"℃";
+                break;
+            default:
+                value = getdata(path + name);
+                break;
+        }
+
+        return name + ": " + value;
+    }
+
     public static void rootcheck(){
         String result = "";
         try {
@@ -120,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     result = bf.readLine();
                     result = result.trim();
                     if (result.equals("1")) {
-                        fileNames[m] = allNames[l] + ": " + getdata(path + allNames[l]);
+                        fileNames[m] = readableit(path, allNames[l]);
                         m++;
                     }
                 }
@@ -145,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 fileNames = new String[j];
                 for (int k = 0; k < files.length; k++) {
                     if (files[k].isFile()) {
-                        fileNames[l] = files[k].getName() + ": " + getdata(files[k].getPath());
+                        fileNames[l] = readableit(path, files[k].getName());
                         l++;
                     }
                 }
@@ -231,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        //final ModManagerBroadcastReceiver.LongOperation lo = new ModManagerBroadcastReceiver.LongOperation();
 
         Button clickButton = (Button) findViewById(R.id.ref);
         clickButton.setOnClickListener(new View.OnClickListener() {
@@ -246,9 +259,7 @@ public class MainActivity extends AppCompatActivity {
                         android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
                 list.setAdapter(adapter);
-                /*if(lo.isCancelled() && getCapacity() != "-1"){
-                    lo.execute("");
-                }*/
+                startService(new Intent(context, NotifService.class));
             }
         });
 
@@ -260,10 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
         list.setAdapter(adapter);
-
-        /*if(lo.isCancelled() && getCapacity() != "-1"){
-            lo.execute("");
-        }*/
+        startService(new Intent(this, NotifService.class));
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -295,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -315,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(

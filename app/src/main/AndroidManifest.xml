@@ -43,8 +43,9 @@
                 <action android:name="com.motorola.mod.action.MOD_USB_CONFLICT_DETECTED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </receiver>
+
+        <service android:name=".NotifService" ></service>
 
     </application>
 

@@ -43,125 +43,17 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
     public static final String ACTION_REQUEST_CONSENT_FOR_UNSECURE_FIRMWARE_UPDATE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_REQ";
     public static final String ACTION_USER_CONSENT_RESP_FOR_UNSECURE_FIRMWARE = "com.motorola.mod.action.UNSEC_FMW_CONSENT_RESP";
 
-    public static NotificationCompat.Builder b;
-    public static NotificationManager nm;
-
-    public static boolean Quit_Task = false;
-    public static PendingIntent resultPendingIntent;
-    public static Context contxt;
     public void onReceive(Context context , Intent intent) {
-        contxt = context;
         String action = intent.getAction();
 
-        b = new NotificationCompat.Builder(context);
-        nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        LongOperation lo = new LongOperation();
-
         if(action.equals(ACTION_MOD_ATTACH)) {
-            Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
-            t.show();
-
-            Intent resultIntent = new Intent(context, MainActivity.class);
-
-            resultPendingIntent =
-                    PendingIntent.getActivity(
-                            context,
-                            0,
-                            resultIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-
             if (!MainActivity.getCapacity().trim().equals("-1")) {
+                Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
+                t.show();
 
-                b.setAutoCancel(false)
-                        .setContentTitle("Battery Mod: " + MainActivity.getCapacity() + "%")
-                        .setContentText(MainActivity.getdata(MainActivity.gb_battery + "status"))
-                        .setSmallIcon(R.drawable.ic_battery_mgr_mod)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
-                        .setPriority(NotificationCompat.PRIORITY_MIN)
-                        .setContentIntent(resultPendingIntent)
-                        .setOngoing(true);
-
-                nm.notify(1, b.build());
-                Quit_Task = false;
-
-                lo.execute("");
-            }
-
-
-        }else if (action.equals(ACTION_MOD_DETACH)) {
-                //MainActivity.pros.destroy();
-                //MainActivity.isrooted = false;
-                Quit_Task = true;
-                boolean cancel = lo.cancel(true);
-                nm.cancel(1);
+                context.startService(new Intent(context, NotifService.class));
             }
         }
-
-    public static class LongOperation extends AsyncTask<String, Void, String> {
-
-        void Sleep(int ms)
-        {
-            try
-            {
-                Thread.sleep(ms);
-            }
-            catch (Exception e)
-            {
-            }
-        }
-
-        protected String oldres="100";
-        protected String oldsts="Discharging";
-
-        @Override
-        protected String doInBackground(String... params) {
-            String result = "99";
-            String status = "Full";
-
-            while (!Quit_Task) {
-                Sleep(1000);
-                result = MainActivity.getCapacity().trim();
-                status = MainActivity.getdata(MainActivity.gb_battery + "status");
-                if (!result.equals("-1")) {
-                    if (!result.equals(oldres) || !status.equals(oldsts)) {
-                        b.setContentTitle("Battery Mod: " + result + "%")
-                                .setAutoCancel(false)
-                                .setContentText(status)
-                                .setLargeIcon(BitmapFactory.decodeResource(contxt.getResources(), R.mipmap.icon))
-                                .setSmallIcon(R.drawable.ic_battery_mgr_mod)
-                                .setPriority(NotificationCompat.PRIORITY_MIN)
-                                .setContentIntent(resultPendingIntent)
-                                .setOngoing(true)
-                        ;
-
-                        nm.notify(1, b.build());
-                        oldres = result;
-                        oldsts = status;
-                    }
-
-                }else {
-                    Quit_Task = true;
-                    nm.cancel(1);
-                    //MainActivity.pros.destroy();
-                    //MainActivity.isrooted = false;
-                    return "-1";
-                }
-
-            }
-            return "0";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
     }
 
 }
