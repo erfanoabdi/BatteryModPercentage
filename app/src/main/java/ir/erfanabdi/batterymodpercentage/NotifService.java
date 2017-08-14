@@ -5,10 +5,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.preference.PreferenceManager;
 
 /**
  * Created by erfanabdi on 3/26/17.
@@ -76,7 +78,9 @@ public class NotifService extends Service{
                 Sleep(1000);
                 result = MainActivity.getCapacity().trim();
                 status = MainActivity.getdata(MainActivity.gb_battery + "status");
-                if (!result.equals("-1")) {
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+                if (!result.equals("-1") && sharedPrefs.getBoolean("notif", true)) {
                     if (!result.equals(oldres) || !status.equals(oldsts)) {
                         b.setContentTitle("Battery Mod: " + result + "%")
                                 .setContentText(status);

@@ -2,9 +2,11 @@ package ir.erfanabdi.batterymodpercentage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -245,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Button clickButton = (Button) findViewById(R.id.ref);
         clickButton.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +262,10 @@ public class MainActivity extends AppCompatActivity {
                         android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
                 list.setAdapter(adapter);
-                startService(new Intent(context, NotifService.class));
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+                if (sharedPrefs.getBoolean("notif", true))
+                    startService(new Intent(context, NotifService.class));
             }
         });
 
@@ -271,7 +277,8 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, android.R.id.text1, getfiles(gb_battery));
 
         list.setAdapter(adapter);
-        startService(new Intent(this, NotifService.class));
+        if (sharedPrefs.getBoolean("notif", true))
+            startService(new Intent(this, NotifService.class));
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -288,6 +295,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.setting:
+                Intent i = new Intent(getApplicationContext(), SettingsFragment.class);
+                startActivity(i);
+                break;
             case R.id.help:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.xda-developers.com/moto-z/themes/app-battery-mod-percentage-t3575753/"));
                 startActivity(browserIntent);

@@ -6,9 +6,11 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
 /**
@@ -49,9 +51,11 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
         if(action.equals(ACTION_MOD_ATTACH)) {
             if (!MainActivity.getCapacity().trim().equals("-1")) {
                 Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
-                t.show();
-
-                context.startService(new Intent(context, NotifService.class));
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (sharedPrefs.getBoolean("notif", true)) {
+                    t.show();
+                    context.startService(new Intent(context, NotifService.class));
+                }
             }
         }
     }
