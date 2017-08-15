@@ -48,7 +48,8 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
             if (!MainActivity.getCapacity().trim().equals("-1")) {
                 Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences prefs = context.getSharedPreferences("ir.erfanabdi.batterymodpercentage.eff", context.MODE_PRIVATE);
+                //it was just bad idea
+                /*SharedPreferences prefs = context.getSharedPreferences("EffEnhc", context.MODE_PRIVATE);
                 boolean eff_on_pref = prefs.getBoolean("eff_on", false);
 
                 if (eff_on_pref){
@@ -56,7 +57,7 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
                     String soc_start_pref = prefs.getString("soc_start", "79");
 
                     enhance(soc_start_pref, soc_stop_pref);
-                }
+                }*/
 
                 if (sharedPrefs.getBoolean("notif", true)) {
                     t.show();

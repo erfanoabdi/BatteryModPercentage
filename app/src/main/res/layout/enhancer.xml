@@ -86,6 +86,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/eff_set"
         android:paddingTop="8dp"
-        android:text="Battery Mod will Charge Phone Battery if it's less than 'Start Level'\nBattery Mod Stop Charging Phone Battery if it's more than 'Stop Level'\nset it once and will be auto for next times" />
+        android:text="Battery Mod will Charge Phone Battery if it's less than 'Start Level'\nBattery Mod Stop Charging Phone Battery if it's more than 'Stop Level'\n\nDon't forget to reboot after setting" />
 
 </RelativeLayout>

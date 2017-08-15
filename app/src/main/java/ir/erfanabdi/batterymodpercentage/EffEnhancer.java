@@ -1,8 +1,11 @@
 package ir.erfanabdi.batterymodpercentage;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.FileObserver;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +14,9 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static ir.erfanabdi.batterymodpercentage.Enhancer.enhance;
 
@@ -23,15 +29,40 @@ public class EffEnhancer extends AppCompatActivity {
     EditText soc_stop, soc_start;
     TextView textViewStart, textViewStop, effstatus;
     Button setButton;
-    SharedPreferences prefs;
     Context context;
+
+    public interface FileObserverListener {
+        void onFileUpdated(String path);
+        void onFileAttributesChanged(String path);
+    }
+
+    private WorldReadablePrefs prefs;
+    private FileObserver mFileObserver;
+    private List<FileObserverListener> mFileObserverListeners;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enhancer);
-        prefs = this.getSharedPreferences("ir.erfanabdi.batterymodpercentage.eff", MODE_PRIVATE);
         context = this;
+
+        String[] perms = new String[] { Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE };
+
+        List<String> reqPerms = new ArrayList<>();
+        for (String perm : perms) {
+            if (context.checkSelfPermission(perm) != PackageManager.PERMISSION_GRANTED) {
+                reqPerms.add(perm);
+            }
+        }
+        if (!reqPerms.isEmpty())
+            requestPermissions(reqPerms.toArray(new String[]{}), 0);
+
+
+        mFileObserverListeners = new ArrayList<>();
+        prefs =  new WorldReadablePrefs(context, "EffEnhc");
+        mFileObserverListeners.add(prefs);
+        registerFileObserver();
 
         eff_on = (Switch) findViewById(R.id.eff_on);
         soc_stop = (EditText) findViewById(R.id.eff_stop);
@@ -56,14 +87,12 @@ public class EffEnhancer extends AppCompatActivity {
                 String start, stop;
                 start = soc_start.getText().toString().trim();
                 stop = soc_stop.getText().toString().trim();
-                SharedPreferences preferences = getSharedPreferences("ir.erfanabdi.batterymodpercentage.eff", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("soc_stop", stop);
-                editor.putString("soc_start", start);
-                editor.apply();
+                prefs.edit().putString("soc_stop", stop).commit();
+                prefs.edit().putString("soc_start", start).commit();
 
-                enhance(start, stop);
-                Toast t = Toast.makeText(context, "Efficiency Mode Values Changed", Toast.LENGTH_SHORT);
+                prefs.fixPermissions(true);
+                //enhance(start, stop);
+                Toast t = Toast.makeText(context, "Efficiency Mode Values Changed just Reboot", Toast.LENGTH_SHORT);
                 t.show();
             }
         });
@@ -71,13 +100,8 @@ public class EffEnhancer extends AppCompatActivity {
         eff_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                SharedPreferences preferences = getSharedPreferences("ir.erfanabdi.batterymodpercentage.eff", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("eff_on", isChecked);
-                editor.apply();
+                prefs.edit().putBoolean("eff_on", isChecked).commit();
                 setall(isChecked);
-
             }
         });
     }
@@ -88,5 +112,21 @@ public class EffEnhancer extends AppCompatActivity {
         textViewStart.setEnabled(what);
         textViewStop.setEnabled(what);
         setButton.setEnabled(what);
+    }
+
+    private void registerFileObserver() {
+        mFileObserver = new FileObserver(context.getDataDir() + "/shared_prefs",
+                FileObserver.ATTRIB | FileObserver.CLOSE_WRITE) {
+            @Override
+            public void onEvent(int event, String path) {
+                for (FileObserverListener l : mFileObserverListeners) {
+                    if ((event & FileObserver.ATTRIB) != 0)
+                        l.onFileAttributesChanged(path);
+                    if ((event & FileObserver.CLOSE_WRITE) != 0)
+                        l.onFileUpdated(path);
+                }
+            }
+        };
+        mFileObserver.startWatching();
     }
 }
