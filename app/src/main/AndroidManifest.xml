@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name="SettingsFragment"></activity>
+        <activity android:name="EffEnhancer"></activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
@@ -47,6 +48,16 @@
         </receiver>
 
         <service android:name=".NotifService" ></service>
+
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="30" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Battery Mod Efficiency Mode Enhancer" />
 
     </application>
 

@@ -1,17 +1,13 @@
 package ir.erfanabdi.batterymodpercentage;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
+
+import static ir.erfanabdi.batterymodpercentage.Enhancer.enhance;
 
 /**
  * Created by erfanabdi on 3/20/17.
@@ -52,6 +48,16 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
             if (!MainActivity.getCapacity().trim().equals("-1")) {
                 Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+                SharedPreferences prefs = context.getSharedPreferences("ir.erfanabdi.batterymodpercentage.eff", context.MODE_PRIVATE);
+                boolean eff_on_pref = prefs.getBoolean("eff_on", false);
+
+                if (eff_on_pref){
+                    String soc_stop_pref = prefs.getString("soc_stop", "80");
+                    String soc_start_pref = prefs.getString("soc_start", "79");
+
+                    enhance(soc_start_pref, soc_stop_pref);
+                }
+
                 if (sharedPrefs.getBoolean("notif", true)) {
                     t.show();
                     context.startService(new Intent(context, NotifService.class));

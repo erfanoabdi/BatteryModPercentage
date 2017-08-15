@@ -299,6 +299,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), SettingsFragment.class);
                 startActivity(i);
                 break;
+            case R.id.effenhc:
+                Intent intentenh = new Intent(getApplicationContext(), EffEnhancer.class);
+                startActivity(intentenh);
+                break;
             case R.id.help:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.xda-developers.com/moto-z/themes/app-battery-mod-percentage-t3575753/"));
                 startActivity(browserIntent);

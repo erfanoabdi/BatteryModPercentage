@@ -7,6 +7,11 @@
         android:showAsAction="ifRoom|withText"
         />
     <item
+        android:id="@+id/effenhc"
+        android:title="Efficiency Enhancer"
+        android:showAsAction="ifRoom|withText"
+        />
+    <item
         android:id="@+id/opensrc"
         android:title="Open Source"
         android:showAsAction="ifRoom|withText"

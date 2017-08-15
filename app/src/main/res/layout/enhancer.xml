@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/effstatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:text="Before Starting make sure Xposed Module is enabled"
+        android:textAlignment="center" />
+
+    <Switch
+        android:id="@+id/eff_on"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/effstatus"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:text="Enable Efficiency Enhancer" />
+
+    <TextView
+        android:id="@+id/textViewStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/eff_start"
+        android:layout_alignBottom="@+id/eff_start"
+        android:layout_alignParentStart="true"
+        android:text="Start Level"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <EditText
+        android:id="@+id/eff_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/eff_set"
+        android:layout_below="@+id/eff_on"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:text="79"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textViewStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Level"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_alignBaseline="@+id/eff_stop"
+        android:layout_alignBottom="@+id/eff_stop"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/eff_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textViewStart"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:text="80"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/eff_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/eff_stop"
+        android:layout_gravity="right"
+        android:text="Set" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/eff_set"
+        android:paddingTop="8dp"
+        android:text="Battery Mod will Charge Phone Battery if it's less than 'Start Level'\nBattery Mod Stop Charging Phone Battery if it's more than 'Stop Level'\nset it once and will be auto for next times" />
+
+</RelativeLayout>
