@@ -93,6 +93,7 @@ public class EffEnhancer extends AppCompatActivity {
                 prefs.edit().putString("soc_start", start).commit();
 
                 prefs.fixPermissions(true);
+                fixFolderPermissionsAsync();
                 //enhance(start, stop);
                 Toast t = Toast.makeText(context, "Efficiency Mode Values Changed just Reboot", Toast.LENGTH_SHORT);
                 t.show();
