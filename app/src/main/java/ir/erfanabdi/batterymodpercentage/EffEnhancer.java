@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +39,6 @@ public class EffEnhancer extends AppCompatActivity {
         void onFileAttributesChanged(String path);
     }
 
-    private WorldReadablePrefs prefs;
     private FileObserver mFileObserver;
     private List<FileObserverListener> mFileObserverListeners;
 
@@ -47,10 +47,15 @@ public class EffEnhancer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enhancer);
         context = this;
-        fixFolderPermissionsAsync();
+        eff_on = (Switch) findViewById(R.id.eff_on);
+        soc_stop = (EditText) findViewById(R.id.eff_stop);
+        soc_start = (EditText) findViewById(R.id.eff_start);
+        textViewStart = (TextView) findViewById(R.id.textViewStart);
+        textViewStop = (TextView) findViewById(R.id.textViewStop);
+        effstatus = (TextView) findViewById(R.id.effstatus);
+        setButton = (Button) findViewById(R.id.eff_set);
         String[] perms = new String[] { Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE };
-
         List<String> reqPerms = new ArrayList<>();
         for (String perm : perms) {
             if (context.checkSelfPermission(perm) != PackageManager.PERMISSION_GRANTED) {
@@ -60,23 +65,30 @@ public class EffEnhancer extends AppCompatActivity {
         if (!reqPerms.isEmpty())
             requestPermissions(reqPerms.toArray(new String[]{}), 0);
 
+        boolean eff_on_pref = false;
+        String soc_stop_pref = "80";
+        String soc_start_pref = "79";
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            WorldReadablePrefs prefs;
+            mFileObserverListeners = new ArrayList<>();
+            prefs = new WorldReadablePrefs(context, "EffEnhc");
+            mFileObserverListeners.add(prefs);
+            registerFileObserver();
+            fixFolderPermissionsAsync();
 
-        mFileObserverListeners = new ArrayList<>();
-        prefs =  new WorldReadablePrefs(context, "EffEnhc");
-        mFileObserverListeners.add(prefs);
-        registerFileObserver();
+            eff_on_pref = prefs.getBoolean("eff_on", false);
+            soc_stop_pref = prefs.getString("soc_stop", "80");
+            soc_start_pref = prefs.getString("soc_start", "79");
+        }
+        else
+        {
+            SharedPreferences prefs = getSharedPreferences("EffEnhc", MODE_WORLD_READABLE);
 
-        eff_on = (Switch) findViewById(R.id.eff_on);
-        soc_stop = (EditText) findViewById(R.id.eff_stop);
-        soc_start = (EditText) findViewById(R.id.eff_start);
-        textViewStart = (TextView) findViewById(R.id.textViewStart);
-        textViewStop = (TextView) findViewById(R.id.textViewStop);
-        effstatus = (TextView) findViewById(R.id.effstatus);
-        setButton = (Button) findViewById(R.id.eff_set);
+            eff_on_pref = prefs.getBoolean("eff_on", false);
+            soc_stop_pref = prefs.getString("soc_stop", "80");
+            soc_start_pref = prefs.getString("soc_start", "79");
+        }
 
-        boolean eff_on_pref = prefs.getBoolean("eff_on", false);
-        String soc_stop_pref = prefs.getString("soc_stop", "80");
-        String soc_start_pref = prefs.getString("soc_start", "79");
         eff_on.setChecked(eff_on_pref);
         soc_start.setText(soc_start_pref);
         soc_stop.setText(soc_stop_pref);
@@ -89,11 +101,16 @@ public class EffEnhancer extends AppCompatActivity {
                 String start, stop;
                 start = soc_start.getText().toString().trim();
                 stop = soc_stop.getText().toString().trim();
-                prefs.edit().putString("soc_stop", stop).commit();
-                prefs.edit().putString("soc_start", start).commit();
-
-                prefs.fixPermissions(true);
-                fixFolderPermissionsAsync();
+                if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                    WorldReadablePrefs prefs = new WorldReadablePrefs(context, "EffEnhc");
+                    prefs.edit().putString("soc_stop", stop).commit();
+                    prefs.edit().putString("soc_start", start).commit();
+                    fixFolderPermissionsAsync();
+                } else {
+                    SharedPreferences prefs = getSharedPreferences("EffEnhc", MODE_WORLD_READABLE);
+                    prefs.edit().putString("soc_stop", stop).commit();
+                    prefs.edit().putString("soc_start", start).commit();
+                }
                 //enhance(start, stop);
                 Toast t = Toast.makeText(context, "Efficiency Mode Values Changed just Reboot", Toast.LENGTH_SHORT);
                 t.show();
@@ -103,7 +120,13 @@ public class EffEnhancer extends AppCompatActivity {
         eff_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean("eff_on", isChecked).commit();
+                if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    WorldReadablePrefs prefs = new WorldReadablePrefs(context, "EffEnhc");
+                    prefs.edit().putBoolean("eff_on", isChecked).commit();
+                } else {
+                    SharedPreferences prefs = getSharedPreferences("EffEnhc", MODE_WORLD_READABLE);
+                    prefs.edit().putBoolean("eff_on", isChecked).commit();
+                }
                 setall(isChecked);
             }
         });

@@ -1,6 +1,7 @@
 package ir.erfanabdi.batterymodpercentage;
 
 import android.content.res.XResources;
+import android.os.Build;
 import android.util.Log;
 
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -15,6 +16,8 @@ public class Enhancer implements IXposedHookZygoteInit {
     public void initZygote(StartupParam startupParam) throws Throwable {
         Log.i("EffEnhc", "Efficiency Enhancer Started");
         XSharedPreferences prefs = new XSharedPreferences("ir.erfanabdi.batterymodpercentage", "EffEnhc");
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.M)
+            prefs.makeWorldReadable();
 
         boolean eff_on_pref = prefs.getBoolean("eff_on", false);
         String y = eff_on_pref ? "Enabled" : "Disabled";
