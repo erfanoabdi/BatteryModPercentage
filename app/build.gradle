@@ -8,8 +8,8 @@ android {
         applicationId "ir.erfanabdi.batterymodpercentage"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 8
-        versionName "1.5"
+        versionCode 10
+        versionName "1.8"
     }
     buildTypes {
         release {
