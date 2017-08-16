@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class EffEnhancer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enhancer);
         context = this;
-
+        fixFolderPermissionsAsync();
         String[] perms = new String[] { Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
@@ -112,6 +114,46 @@ public class EffEnhancer extends AppCompatActivity {
         textViewStart.setEnabled(what);
         textViewStop.setEnabled(what);
         setButton.setEnabled(what);
+    }
+
+    public void fixFolderPermissionsAsync() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                // main dir
+                File pkgFolder = context.getDataDir();
+                if (pkgFolder.exists()) {
+                    pkgFolder.setExecutable(true, false);
+                    pkgFolder.setReadable(true, false);
+                }
+                // cache dir
+                File cacheFolder = context.getCacheDir();
+                if (cacheFolder.exists()) {
+                    cacheFolder.setExecutable(true, false);
+                    cacheFolder.setReadable(true, false);
+                }
+                // files dir
+                File filesFolder = context.getFilesDir();
+                if (filesFolder.exists()) {
+                    filesFolder.setExecutable(true, false);
+                    filesFolder.setReadable(true, false);
+                    for (File f : filesFolder.listFiles()) {
+                        f.setExecutable(true, false);
+                        f.setReadable(true, false);
+                    }
+                }
+                // app picker
+                File appPickerFolder = new File(context.getFilesDir() + "/app_picker");
+                if (appPickerFolder.exists()) {
+                    appPickerFolder.setExecutable(true, false);
+                    appPickerFolder.setReadable(true, false);
+                    for (File f : appPickerFolder.listFiles()) {
+                        f.setExecutable(true, false);
+                        f.setReadable(true, false);
+                    }
+                }
+            }
+        });
     }
 
     private void registerFileObserver() {
