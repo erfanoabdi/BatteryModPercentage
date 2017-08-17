@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ir.erfanabdi.batterymodpercentage.Enhancer.enhance;
-
 /**
  * Created by erfanabdi on 8/15/17.
  */
@@ -111,8 +109,8 @@ public class EffEnhancer extends AppCompatActivity {
                     prefs.edit().putString("soc_stop", stop).commit();
                     prefs.edit().putString("soc_start", start).commit();
                 }
-                //enhance(start, stop);
-                Toast t = Toast.makeText(context, "Efficiency Mode Values Changed just Reboot", Toast.LENGTH_SHORT);
+
+                Toast t = Toast.makeText(context, "Efficiency Mode Values Changed, just reset Efficiency mode", Toast.LENGTH_SHORT);
                 t.show();
             }
         });

@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
-import static ir.erfanabdi.batterymodpercentage.Enhancer.enhance;
-
 /**
  * Created by erfanabdi on 3/20/17.
  */
@@ -48,16 +46,6 @@ public class ModManagerBroadcastReceiver extends BroadcastReceiver {
             if (!MainActivity.getCapacity().trim().equals("-1")) {
                 Toast t = Toast.makeText(context, "Battery Mod: " + MainActivity.getCapacity() + "%", Toast.LENGTH_SHORT);
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-                //it was just bad idea
-                /*SharedPreferences prefs = context.getSharedPreferences("EffEnhc", context.MODE_PRIVATE);
-                boolean eff_on_pref = prefs.getBoolean("eff_on", false);
-
-                if (eff_on_pref){
-                    String soc_stop_pref = prefs.getString("soc_stop", "80");
-                    String soc_start_pref = prefs.getString("soc_start", "79");
-
-                    enhance(soc_start_pref, soc_stop_pref);
-                }*/
 
                 if (sharedPrefs.getBoolean("notif", true)) {
                     t.show();
